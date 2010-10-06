@@ -10,11 +10,27 @@ Author URI:
 
 function civicrm_form_shortcode($attrs)
 {
+	// TODO: These values need to be configurable
+	// Key for the whole site (CIVICRM_SITE_KEY in /etc/drupal/6/sites/default/civicrm.settings.php)
+	$site_key = "tOw8DDyH8jKOKo40JCXq";
+	// Key just for the particular user that is associated with the actions that this plugin performs
+	// (This key can also be obtained by logging that user in through the api)
+	$api_key = "bd832d8a47dc2ed4cf2fbbf5677bfd2d";
+	$civicrm_root_url = "http://localhost/drupal6/sites/all/modules/civicrm";
+
 	if ($_POST) {
+		// TODO: Clean up input
+		$first_name = $_POST["first_name"];
+		$last_name = $_POST["last_name"];
+		$email = $_POST["email"];
+		
 		echo "<p>Values just submitted:</p>";
-		echo "<p>First Name: {$_POST["first_name"]}</p>";
-		echo "<p>Last Name: {$_POST["last_name"]}</p>";
-		echo "<p>Email: {$_POST["email"]}</p>";
+		echo "<p>First Name: {$first_name}</p>";
+		echo "<p>Last Name: {$last_name}</p>";
+		echo "<p>Email: {$email}</p>";
+		$url = "{$civicrm_root_url}/extern/rest.php?q=civicrm/contact/add&key={$site_key}&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
+		wp_remote_post($url);
+		echo "<p>URL: {$url}</p>";
 	}
 	else {
 ?>
