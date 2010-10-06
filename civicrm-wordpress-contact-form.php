@@ -13,12 +13,17 @@ function civicrm_form_shortcode($attrs)
 	// TODO: These values need to be configurable
 	// Key for the whole site (CIVICRM_SITE_KEY in /etc/drupal/6/sites/default/civicrm.settings.php)
 	$site_key = "tOw8DDyH8jKOKo40JCXq";
-	// Key just for the particular user that is associated with the actions that this plugin performs
-	// (This key can also be obtained by logging that user in through the api)
-	$api_key = "bd832d8a47dc2ed4cf2fbbf5677bfd2d";
 	$civicrm_root_url = "http://localhost/drupal6/sites/all/modules/civicrm";
+	// Username and password for the CiviCRM user associated with the actions of this plugin
+	$username = "matthew";
+	$password = "password";
 
 	if ($_POST) {
+		$url = "{$civicrm_root_url}/extern/rest.php?q=civicrm/login&key={$site_key}&name={$username}&pass={$password}&json=1";
+		$result = wp_remote_get($url);
+		$json = json_decode($result["body"], true);
+		$api_key = $json["api_key"];
+
 		// TODO: Clean up input
 		$first_name = $_POST["first_name"];
 		$last_name = $_POST["last_name"];
