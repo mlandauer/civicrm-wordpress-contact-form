@@ -38,7 +38,6 @@ function civicrm_form_shortcode($attrs)
 {	
 	if ($_POST) {
         $option = get_option('civicrm');
-        $api_key = civicrm_get_api_key($option['drupal_root_url'], $option['site_key'], $option['username'], $option['password']);
 
 		// TODO: Clean up input
 		$first_name = $_POST["first_name"];
@@ -46,7 +45,7 @@ function civicrm_form_shortcode($attrs)
 		$email = $_POST["email"];
 		
         echo "<p>Thanks for getting in touch! Your message has been sent</p>";
-        civicrm_add_contact($option['drupal_root_url']l, $option['site_key'], $api_key, $first_name, $last_name, $email);
+        civicrm_add_contact($option['drupal_root_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
 	}
 ?>
 	<form action="" method="post" accept-charset="utf-8" id="contact">
@@ -106,11 +105,20 @@ function civicrm_register_settings()
     add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
     add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
 
-    register_setting( 'civicrm-settings-group', 'civicrm' );
+    register_setting( 'civicrm-settings-group', 'civicrm', 'civicrm_validate' );
 }
 
 add_action('admin_menu', 'civicrm_register_options_page');
 add_action('admin_init', 'civicrm_register_settings' );
+
+function civicrm_validate($input)
+{
+    // Store away the api key in the config as well
+    $input['api_key'] = civicrm_get_api_key($input['drupal_root_url'], $input['site_key'], $input['username'], $input['password']);
+    if (!$input['api_key'])
+        add_settings_error('civicrm_drupal_root_url', '', __("Error in talking to CiviCRM {$api_key}"));
+    return $input;
+}
 
 function civicrm_drupal_root_url_callback_function()
 {
