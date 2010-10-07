@@ -35,36 +35,36 @@ function civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $pa
 }
 
 function civicrm_form_shortcode($attrs)
-{	
-	if ($_POST) {
+{
+    if ($_POST) {
         $option = get_option('civicrm');
 
-		// TODO: Clean up input
-		$first_name = $_POST["first_name"];
-		$last_name = $_POST["last_name"];
-		$email = $_POST["email"];
-		
+        // TODO: Clean up input
+        $first_name = $_POST["first_name"];
+        $last_name = $_POST["last_name"];
+        $email = $_POST["email"];
+
         echo "<p>Thanks for getting in touch! Your message has been sent</p>";
         civicrm_add_contact($option['drupal_root_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
-	}
+    }
 ?>
-	<form action="" method="post" accept-charset="utf-8" id="contact">
-	<p>
-		Your First Name: <br>
-		<input type="text" name="first_name" value="" id="first_name" />
-	</p>
-	
-	<p>
-		Your Last Name:<br>
-		<input type="text" name="last_name" value="" id="last_name" />
-	</p>
-	
-	<p>
-		Email Address:<br>
-		<input type="text" name="email" value="" id="email" />
-	</p>
-	
-	<input type="submit" value="contact" name="contact">
+    <form action="" method="post" accept-charset="utf-8" id="contact">
+    <p>
+        Your First Name: <br>
+        <input type="text" name="first_name" value="" id="first_name" />
+    </p>
+
+    <p>
+        Your Last Name:<br>
+        <input type="text" name="last_name" value="" id="last_name" />
+    </p>
+
+    <p>
+        Email Address:<br>
+        <input type="text" name="email" value="" id="email" />
+    </p>
+    
+    <input type="submit" value="contact" name="contact">
 </form>
 <?php
 }
@@ -73,35 +73,35 @@ add_shortcode('civicrm', 'civicrm_form_shortcode');
 
 function civicrm_options_page()
 {
-	?>
-	<div class="wrap">
-		<h2>CiviCRM Contact Form Settings</h2>
-		<form method="post" action="options.php">
-			<?php settings_fields( 'civicrm-settings-group' ); ?>
+    ?>
+    <div class="wrap">
+        <h2>CiviCRM Contact Form Settings</h2>
+        <form method="post" action="options.php">
+            <?php settings_fields( 'civicrm-settings-group' ); ?>
             <?php do_settings_sections('civicrm_admin_options'); ?>
-			<p class="submit">
-			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			</p>
+            <p class="submit">
+            <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+            </p>
 
-		</form>
-	</div>
-	<?php
+        </form>
+    </div>
+    <?php
 }
 
 function civicrm_register_options_page()
 {
-	add_options_page( 'My Plugin Options', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
+    add_options_page( 'My Plugin Options', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
 
 }
 
 function civicrm_register_settings()
 {
- 	add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
+    add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
 
     add_settings_field('civicrm_drupal_root_url', 'Drupal Home URL', 'civicrm_drupal_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
     add_settings_field('civicrm_site_key', 'Site Key', 'civicrm_site_key_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
 
- 	add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', 'civicrm_user_settings_callback_function', 'civicrm_admin_options');
+    add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', 'civicrm_user_settings_callback_function', 'civicrm_admin_options');
     add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
     add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
 
