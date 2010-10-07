@@ -50,13 +50,9 @@ function civicrm_form_shortcode($attrs)
 		$last_name = $_POST["last_name"];
 		$email = $_POST["email"];
 		
-		echo "<p>Values just submitted:</p>";
-		echo "<p>First Name: {$first_name}</p>";
-		echo "<p>Last Name: {$last_name}</p>";
-		echo "<p>Email: {$email}</p>";
+        echo "<p>Thanks for getting in touch! Your message has been sent</p>";
         civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email);
 	}
-	else {
 ?>
 	<form action="" method="post" accept-charset="utf-8" id="contact">
 	<p>
@@ -77,7 +73,6 @@ function civicrm_form_shortcode($attrs)
 	<input type="submit" value="contact" name="contact">
 </form>
 <?php
-	}
 }
 
 add_shortcode('civicrm', 'civicrm_form_shortcode');
