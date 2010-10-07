@@ -10,23 +10,28 @@ Author URI:
 
 // TODO: Put all these functions in a class
 
+function civicrm_api($civicrm_drupal_root_url, $site_key, $command, $method, $params)
+{
+    $params = array_merge($params, array("key" => $site_key, "q" => "civicrm/{$command}", "json" => 1));
+    $url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?" . http_build_query($params);
+    $result = wp_remote_request($url, array("method" => $method));
+    $json = json_decode($result["body"], true);
+    // TODO: Error checking
+    return $json;
+}
+
 function civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email)
 {
-    $rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
-    $url = "{$rest_url}/contact/add&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
-    wp_remote_post($url);
-    // TODO: Error checking
-    echo "<p>URL: {$url}</p>";
+    $params = array( "api_key" => $api_key, "first_name" => $first_name, "last_name" => $last_name,
+        "email" => $email, "contact_type" => "Individual");
+    civicrm_api($civicrm_drupal_root_url, $site_key, "contact/add", "POST", $params);
 }
 
 function civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password)
 {
-    $rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
-    $url = "{$rest_url}/login&name={$username}&pass={$password}&json=1";
-    $result = wp_remote_get($url);
-    $json = json_decode($result["body"], true);
-    // TODO: Error checking
-    return $json["api_key"];
+    $params2 = array("name" => $username, "pass" => $password);
+    $result = civicrm_api($civicrm_drupal_root_url, $site_key, "login", "GET", $params2);    
+    return $result["api_key"];
 }
 
 function civicrm_form_shortcode($attrs)
