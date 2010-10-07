@@ -11,10 +11,11 @@ Author URI:
 function civicrm_form_shortcode($attrs)
 {	
 	if ($_POST) {
-		$civicrm_drupal_root_url = get_option('civicrm_drupal_root_url');
-		$site_key = get_option('civicrm_site_key');
-		$username = get_option('civicrm_username');
-		$password = get_option('civicrm_password');
+        $option = get_option('civicrm');
+		$civicrm_drupal_root_url = $option['drupal_root_url'];
+		$site_key = $option['site_key'];
+		$username = $option['username'];
+		$password = $option['password'];
 
 		$rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
 		
@@ -97,10 +98,11 @@ function civicrm_register_settings()
     add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
     add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
 
-	register_setting( 'civicrm-settings-group', 'civicrm_drupal_root_url' );
-	register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
-	register_setting( 'civicrm-settings-group', 'civicrm_username' );
-	register_setting( 'civicrm-settings-group', 'civicrm_password' );
+	//register_setting( 'civicrm-settings-group', 'civicrm_drupal_root_url' );
+	//register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
+	//register_setting( 'civicrm-settings-group', 'civicrm_username' );
+	//register_setting( 'civicrm-settings-group', 'civicrm_password' );
+    register_setting( 'civicrm-settings-group', 'civicrm' );
 }
 
 add_action('admin_menu', 'civicrm_register_options_page');
@@ -108,25 +110,29 @@ add_action('admin_init', 'civicrm_register_settings' );
 
 function civicrm_drupal_root_url_callback_function()
 {
-    $value = get_option("civicrm_drupal_root_url");
-    echo "<input type='text' name='civicrm_drupal_root_url' value='{$value}'  size=35/>";
+    $option = get_option("civicrm");
+    $value = $option['drupal_root_url'];
+    echo "<input type='text' name='civicrm[drupal_root_url]' value='{$value}'  size=35/>";
 }
 
 function civicrm_site_key_callback_function()
 {
-    $value = get_option("civicrm_site_key");
-    echo "<input type='text' name='civicrm_site_key' value='{$value}' size=35 />";
+    $option = get_option("civicrm");
+    $value = $option['site_key'];
+    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 />";
 }
 
 function civicrm_username_callback_function()
 {
-    $value = get_option("civicrm_username");
-    echo "<input type='text' name='civicrm_username' value='{$value}' />";
+    $option = get_option("civicrm");
+    $value = $option['username'];
+    echo "<input type='text' name='civicrm[username]' value='{$value}' />";
 }
 
 function civicrm_password_callback_function()
 {
-    $value = get_option("civicrm_password");
-    echo "<input type='password' name='civicrm_password' value='{$value}' />";
+    $option = get_option("civicrm");
+    $value = $option['password'];
+    echo "<input type='password' name='civicrm[password]' value='{$value}' />";
 }
 ?>
