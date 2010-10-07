@@ -98,10 +98,6 @@ function civicrm_register_settings()
     add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
     add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
 
-	//register_setting( 'civicrm-settings-group', 'civicrm_drupal_root_url' );
-	//register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
-	//register_setting( 'civicrm-settings-group', 'civicrm_username' );
-	//register_setting( 'civicrm-settings-group', 'civicrm_password' );
     register_setting( 'civicrm-settings-group', 'civicrm' );
 }
 
