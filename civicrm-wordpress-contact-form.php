@@ -11,12 +11,14 @@ Author URI:
 function civicrm_form_shortcode($attrs)
 {	
 	if ($_POST) {
-		$civicrm_root_url = get_option('civicrm_root_url');
+		$civicrm_drupal_root_url = get_option('civicrm_drupal_root_url');
 		$site_key = get_option('civicrm_site_key');
 		$username = get_option('civicrm_username');
 		$password = get_option('civicrm_password');
 
-		$url = "{$civicrm_root_url}/extern/rest.php?q=civicrm/login&key={$site_key}&name={$username}&pass={$password}&json=1";
+		$rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
+		
+		$url = "{$rest_url}/login&name={$username}&pass={$password}&json=1";
 		$result = wp_remote_get($url);
 		$json = json_decode($result["body"], true);
 		$api_key = $json["api_key"];
@@ -30,8 +32,9 @@ function civicrm_form_shortcode($attrs)
 		echo "<p>First Name: {$first_name}</p>";
 		echo "<p>Last Name: {$last_name}</p>";
 		echo "<p>Email: {$email}</p>";
-		$url = "{$civicrm_root_url}/extern/rest.php?q=civicrm/contact/add&key={$site_key}&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
+		$url = "{$rest_url}/contact/add&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
 		wp_remote_post($url);
+		// TODO: Error checking
 		echo "<p>URL: {$url}</p>";
 	}
 	else {
@@ -69,8 +72,8 @@ function civicrm_options_page()
 			<?php settings_fields( 'civicrm-settings-group' ); ?>
 			<table class="form-table">
 				<tr valign="top">
-				<th scope="row">CiviCRM root URL</th>
-				<td><input type="text" name="civicrm_root_url" value="<?php echo get_option('civicrm_root_url'); ?>" /></td>
+				<th scope="row">Drupal home URL (where CiviCRM is installed)</th>
+				<td><input type="text" name="civicrm_drupal_root_url" value="<?php echo get_option('civicrm_drupal_root_url'); ?>" /></td>
 				</tr>
 				 
 				<tr valign="top">
@@ -85,7 +88,7 @@ function civicrm_options_page()
 				
 				<tr valign="top">
 				<th scope="row">CiviCRM password</th>
-				<td><input type="text" name="civicrm_password" value="<?php echo get_option('civicrm_password'); ?>" /></td>
+				<td><input type="password" name="civicrm_password" value="<?php echo get_option('civicrm_password'); ?>" /></td>
 				</tr>
 			</table>
 			
@@ -106,7 +109,7 @@ function civicrm_register_options_page()
 
 function civicrm_register_settings()
 {
-	register_setting( 'civicrm-settings-group', 'civicrm_root_url' );
+	register_setting( 'civicrm-settings-group', 'civicrm_drupal_root_url' );
 	register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
 	register_setting( 'civicrm-settings-group', 'civicrm_username' );
 	register_setting( 'civicrm-settings-group', 'civicrm_password' );
