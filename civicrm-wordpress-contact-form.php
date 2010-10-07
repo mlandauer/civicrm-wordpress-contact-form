@@ -9,16 +9,13 @@ Author URI:
 */
 
 function civicrm_form_shortcode($attrs)
-{
-	// TODO: These values need to be configurable
-	// Key for the whole site (CIVICRM_SITE_KEY in /etc/drupal/6/sites/default/civicrm.settings.php)
-	$site_key = "tOw8DDyH8jKOKo40JCXq";
-	$civicrm_root_url = "http://localhost/drupal6/sites/all/modules/civicrm";
-	// Username and password for the CiviCRM user associated with the actions of this plugin
-	$username = "matthew";
-	$password = "password";
-
+{	
 	if ($_POST) {
+		$civicrm_root_url = get_option('civicrm_root_url');
+		$site_key = get_option('civicrm_site_key');
+		$username = get_option('civicrm_username');
+		$password = get_option('civicrm_password');
+
 		$url = "{$civicrm_root_url}/extern/rest.php?q=civicrm/login&key={$site_key}&name={$username}&pass={$password}&json=1";
 		$result = wp_remote_get($url);
 		$json = json_decode($result["body"], true);
@@ -61,6 +58,61 @@ function civicrm_form_shortcode($attrs)
 	}
 }
 
-add_shortcode('civicrm', 'civicrm_form_shortcode');	
+add_shortcode('civicrm', 'civicrm_form_shortcode');
+
+function civicrm_options_page()
+{
+	?>
+	<div class="wrap">
+		<h2>CiviCRM Contact Form Settings</h2>
+		<form method="post" action="options.php">
+			<?php settings_fields( 'civicrm-settings-group' ); ?>
+			<table class="form-table">
+				<tr valign="top">
+				<th scope="row">CiviCRM root URL</th>
+				<td><input type="text" name="civicrm_root_url" value="<?php echo get_option('civicrm_root_url'); ?>" /></td>
+				</tr>
+				 
+				<tr valign="top">
+				<th scope="row">CiviCRM site key</th>
+				<td><input type="text" name="civicrm_site_key" value="<?php echo get_option('civicrm_site_key'); ?>" /></td>
+				</tr>
+				 
+				<tr valign="top">
+				<th scope="row">CiviCRM username</th>
+				<td><input type="text" name="civicrm_username" value="<?php echo get_option('civicrm_username'); ?>" /></td>
+				</tr>
+				
+				<tr valign="top">
+				<th scope="row">CiviCRM password</th>
+				<td><input type="text" name="civicrm_password" value="<?php echo get_option('civicrm_password'); ?>" /></td>
+				</tr>
+			</table>
+			
+			<p class="submit">
+			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+			</p>
+
+		</form>
+	</div>
+	<?php
+}
+
+function civicrm_register_options_page()
+{
+	add_options_page( 'My Plugin Options', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
+
+}
+
+function civicrm_register_settings()
+{
+	register_setting( 'civicrm-settings-group', 'civicrm_root_url' );
+	register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
+	register_setting( 'civicrm-settings-group', 'civicrm_username' );
+	register_setting( 'civicrm-settings-group', 'civicrm_password' );
+}
+
+add_action('admin_menu', 'civicrm_register_options_page');
+add_action('admin_init', 'civicrm_register_settings' );
 
 ?>
