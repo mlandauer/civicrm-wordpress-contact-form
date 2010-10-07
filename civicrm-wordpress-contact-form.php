@@ -8,6 +8,27 @@ Version: 0.0.1
 Author URI: 
 */
 
+// TODO: Put all these functions in a class
+
+function civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email)
+{
+    $rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
+    $url = "{$rest_url}/contact/add&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
+    wp_remote_post($url);
+    // TODO: Error checking
+    echo "<p>URL: {$url}</p>";
+}
+
+function civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password)
+{
+    $rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
+    $url = "{$rest_url}/login&name={$username}&pass={$password}&json=1";
+    $result = wp_remote_get($url);
+    $json = json_decode($result["body"], true);
+    // TODO: Error checking
+    return $json["api_key"];
+}
+
 function civicrm_form_shortcode($attrs)
 {	
 	if ($_POST) {
@@ -17,12 +38,7 @@ function civicrm_form_shortcode($attrs)
 		$username = $option['username'];
 		$password = $option['password'];
 
-		$rest_url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?key={$site_key}&q=civicrm";
-		
-		$url = "{$rest_url}/login&name={$username}&pass={$password}&json=1";
-		$result = wp_remote_get($url);
-		$json = json_decode($result["body"], true);
-		$api_key = $json["api_key"];
+        $api_key = civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password);
 
 		// TODO: Clean up input
 		$first_name = $_POST["first_name"];
@@ -33,10 +49,7 @@ function civicrm_form_shortcode($attrs)
 		echo "<p>First Name: {$first_name}</p>";
 		echo "<p>Last Name: {$last_name}</p>";
 		echo "<p>Email: {$email}</p>";
-		$url = "{$rest_url}/contact/add&api_key={$api_key}&first_name={$first_name}&last_name={$last_name}&email={$email}&contact_type=Individual";
-		wp_remote_post($url);
-		// TODO: Error checking
-		echo "<p>URL: {$url}</p>";
+        civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email);
 	}
 	else {
 ?>
