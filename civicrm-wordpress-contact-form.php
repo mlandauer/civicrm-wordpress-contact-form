@@ -38,12 +38,7 @@ function civicrm_form_shortcode($attrs)
 {	
 	if ($_POST) {
         $option = get_option('civicrm');
-		$civicrm_drupal_root_url = $option['drupal_root_url'];
-		$site_key = $option['site_key'];
-		$username = $option['username'];
-		$password = $option['password'];
-
-        $api_key = civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password);
+        $api_key = civicrm_get_api_key($option['drupal_root_url'], $option['site_key'], $option['username'], $option['password']);
 
 		// TODO: Clean up input
 		$first_name = $_POST["first_name"];
@@ -51,7 +46,7 @@ function civicrm_form_shortcode($attrs)
 		$email = $_POST["email"];
 		
         echo "<p>Thanks for getting in touch! Your message has been sent</p>";
-        civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email);
+        civicrm_add_contact($option['drupal_root_url']l, $option['site_key'], $api_key, $first_name, $last_name, $email);
 	}
 ?>
 	<form action="" method="post" accept-charset="utf-8" id="contact">
