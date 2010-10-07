@@ -91,10 +91,10 @@ function civicrm_register_settings()
 {
  	add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
 
-    add_settings_field('civicrm_drupal_root_url', 'Drupal Home URL (where CiviCRM is installed)', 'civicrm_drupal_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
+    add_settings_field('civicrm_drupal_root_url', 'Drupal Home URL', 'civicrm_drupal_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
     add_settings_field('civicrm_site_key', 'Site Key', 'civicrm_site_key_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
 
- 	add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', null, 'civicrm_admin_options');
+ 	add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', 'civicrm_user_settings_callback_function', 'civicrm_admin_options');
     add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
     add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
 
@@ -108,14 +108,19 @@ function civicrm_drupal_root_url_callback_function()
 {
     $option = get_option("civicrm");
     $value = $option['drupal_root_url'];
-    echo "<input type='text' name='civicrm[drupal_root_url]' value='{$value}'  size=35/>";
+    echo "<input type='text' name='civicrm[drupal_root_url]' value='{$value}'  size=35/> <br/>Where CiviCRM is installed. e.g. http://www.foo.com/drupal6";
 }
 
 function civicrm_site_key_callback_function()
 {
     $option = get_option("civicrm");
     $value = $option['site_key'];
-    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 />";
+    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See CIVICRM_SITE_KEY in /etc/drupal/6/sites/default/civicrm.settings.php";
+}
+
+function civicrm_user_settings_callback_function()
+{
+    echo "Here, we need a CiviCRM user that has REST API access. See the <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/REST+interface'>CiviCRM wiki</a> for details of the excrutiating process you have to go through to create an API key for a particular user.";
 }
 
 function civicrm_username_callback_function()
