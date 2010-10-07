@@ -70,28 +70,7 @@ function civicrm_options_page()
 		<h2>CiviCRM Contact Form Settings</h2>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'civicrm-settings-group' ); ?>
-			<table class="form-table">
-				<tr valign="top">
-				<th scope="row">Drupal home URL (where CiviCRM is installed)</th>
-				<td><input type="text" name="civicrm_drupal_root_url" value="<?php echo get_option('civicrm_drupal_root_url'); ?>" /></td>
-				</tr>
-				 
-				<tr valign="top">
-				<th scope="row">CiviCRM site key</th>
-				<td><input type="text" name="civicrm_site_key" value="<?php echo get_option('civicrm_site_key'); ?>" /></td>
-				</tr>
-				 
-				<tr valign="top">
-				<th scope="row">CiviCRM username</th>
-				<td><input type="text" name="civicrm_username" value="<?php echo get_option('civicrm_username'); ?>" /></td>
-				</tr>
-				
-				<tr valign="top">
-				<th scope="row">CiviCRM password</th>
-				<td><input type="password" name="civicrm_password" value="<?php echo get_option('civicrm_password'); ?>" /></td>
-				</tr>
-			</table>
-			
+            <?php do_settings_sections('civicrm_admin_options'); ?>
 			<p class="submit">
 			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 			</p>
@@ -109,6 +88,15 @@ function civicrm_register_options_page()
 
 function civicrm_register_settings()
 {
+ 	add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
+
+    add_settings_field('civicrm_drupal_root_url', 'Drupal Home URL (where CiviCRM is installed)', 'civicrm_drupal_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
+    add_settings_field('civicrm_site_key', 'Site Key', 'civicrm_site_key_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
+
+ 	add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', null, 'civicrm_admin_options');
+    add_settings_field('civicrm_username', 'Username', 'civicrm_username_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
+    add_settings_field('civicrm_password', 'Password', 'civicrm_password_callback_function', 'civicrm_admin_options', 'civicrm_user_settings');
+
 	register_setting( 'civicrm-settings-group', 'civicrm_drupal_root_url' );
 	register_setting( 'civicrm-settings-group', 'civicrm_site_key' );
 	register_setting( 'civicrm-settings-group', 'civicrm_username' );
@@ -118,4 +106,27 @@ function civicrm_register_settings()
 add_action('admin_menu', 'civicrm_register_options_page');
 add_action('admin_init', 'civicrm_register_settings' );
 
+function civicrm_drupal_root_url_callback_function()
+{
+    $value = get_option("civicrm_drupal_root_url");
+    echo "<input type='text' name='civicrm_drupal_root_url' value='{$value}' />";
+}
+
+function civicrm_site_key_callback_function()
+{
+    $value = get_option("civicrm_site_key");
+    echo "<input type='text' name='civicrm_site_key' value='{$value}' />";
+}
+
+function civicrm_username_callback_function()
+{
+    $value = get_option("civicrm_username");
+    echo "<input type='text' name='civicrm_username' value='{$value}' />";
+}
+
+function civicrm_password_callback_function()
+{
+    $value = get_option("civicrm_password");
+    echo "<input type='password' name='civicrm_password' value='{$value}' />";
+}
 ?>
