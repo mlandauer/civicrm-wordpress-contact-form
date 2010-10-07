@@ -109,13 +109,13 @@ add_action('admin_init', 'civicrm_register_settings' );
 function civicrm_drupal_root_url_callback_function()
 {
     $value = get_option("civicrm_drupal_root_url");
-    echo "<input type='text' name='civicrm_drupal_root_url' value='{$value}' />";
+    echo "<input type='text' name='civicrm_drupal_root_url' value='{$value}'  size=35/>";
 }
 
 function civicrm_site_key_callback_function()
 {
     $value = get_option("civicrm_site_key");
-    echo "<input type='text' name='civicrm_site_key' value='{$value}' />";
+    echo "<input type='text' name='civicrm_site_key' value='{$value}' size=35 />";
 }
 
 function civicrm_username_callback_function()
