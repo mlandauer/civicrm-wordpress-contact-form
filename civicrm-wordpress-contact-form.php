@@ -10,27 +10,28 @@ Author URI:
 
 // TODO: Put all these functions in a class
 
-function civicrm_api($civicrm_drupal_root_url, $site_key, $command, $method, $params)
+function civicrm_api($civicrm_rest_url, $site_key, $command, $method, $params)
 {
     $params = array_merge($params, array("key" => $site_key, "q" => "civicrm/{$command}", "json" => 1));
-    $url = "{$civicrm_drupal_root_url}/sites/all/modules/civicrm/extern/rest.php?" . http_build_query($params);
+    $url = $civicrm_rest_url."?".http_build_query($params);
     $result = wp_remote_request($url, array("method" => $method));
+    echo "<p>{$url}</p>";
     $json = json_decode($result["body"], true);
     // TODO: Error checking
     return $json;
 }
 
-function civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $first_name, $last_name, $email)
+function civicrm_add_contact($civicrm_rest_url, $site_key, $api_key, $first_name, $last_name, $email)
 {
     $params = array( "api_key" => $api_key, "first_name" => $first_name, "last_name" => $last_name,
         "email" => $email, "contact_type" => "Individual");
-    civicrm_api($civicrm_drupal_root_url, $site_key, "contact/add", "POST", $params);
+    civicrm_api($civicrm_rest_url, $site_key, "contact/add", "POST", $params);
 }
 
-function civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password)
+function civicrm_get_api_key($civicrm_rest_url, $site_key, $username, $password)
 {
     $params2 = array("name" => $username, "pass" => $password);
-    $result = civicrm_api($civicrm_drupal_root_url, $site_key, "login", "POST", $params2);    
+    $result = civicrm_api($civicrm_rest_url, $site_key, "login", "POST", $params2);    
     return $result["api_key"];
 }
 
@@ -45,7 +46,7 @@ function civicrm_form_shortcode($attrs)
         $email = $_POST["email"];
 
         echo "<p>Thanks for getting in touch! Your message has been sent</p>";
-        civicrm_add_contact($option['drupal_root_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
+        civicrm_add_contact($option['rest_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
     }
 ?>
     <form action="" method="post" accept-charset="utf-8" id="contact">
@@ -111,7 +112,8 @@ function civicrm_register_settings()
 {
     add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
 
-    add_settings_field('civicrm_drupal_root_url', 'Drupal Home URL', 'civicrm_drupal_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
+    add_settings_field('civicrm_cms', 'CMS on which it is installed', 'civicrm_cms_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
+    add_settings_field('civicrm_root_url', 'Home URL', 'civicrm_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
     add_settings_field('civicrm_site_key', 'Site Key', 'civicrm_site_key_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
 
     add_settings_section('civicrm_user_settings', 'CiviCRM user with API access', 'civicrm_user_settings_callback_function', 'civicrm_admin_options');
@@ -127,18 +129,34 @@ add_action('admin_footer', 'civicrm_admin_warning');
 
 function civicrm_validate($input)
 {
+    // Store away the rest_url in the config as well
+    if ($input['cms'] == 'Drupal')
+        $input['rest_url'] = $input['root_url']."/sites/all/modules/civicrm/extern/rest.php";
+    else
+        $input['rest_url'] = $input['root_url']."/administrator/components/com_civicrm/civicrm/extern/rest.php";
+
     // Store away the api key in the config as well
-    $input['api_key'] = civicrm_get_api_key($input['drupal_root_url'], $input['site_key'], $input['username'], $input['password']);
+    $input['api_key'] = civicrm_get_api_key($input['rest_url'], $input['site_key'], $input['username'], $input['password']);
     if (!$input['api_key'])
-        add_settings_error('civicrm_drupal_root_url', '', __("Error in talking to CiviCRM {$api_key}"));
+        add_settings_error('civicrm_root_url', '', __("Error in talking to CiviCRM {$api_key}"));
+        
     return $input;
 }
 
-function civicrm_drupal_root_url_callback_function()
+function civicrm_cms_callback_function()
 {
     $option = get_option("civicrm");
-    $value = $option['drupal_root_url'];
-    echo "<input type='text' name='civicrm[drupal_root_url]' value='{$value}'  size=35/> <br/>Where CiviCRM is installed. e.g. http://www.foo.com/drupal6";
+    if ($option['cms'] == 'Joomla!')
+        echo "<select name='civicrm[cms]'><option>Drupal</option><option selected='selected'>Joomla!</option></select>";
+    else
+        echo "<select name='civicrm[cms]'><option selected='selected'>Drupal</option><option>Joomla!</option></select>";
+}
+
+function civicrm_root_url_callback_function()
+{
+    $option = get_option("civicrm");
+    $value = $option['root_url'];
+    echo "<input type='text' name='civicrm[root_url]' value='{$value}'  size=35/> <br/>Where CiviCRM is installed. e.g. http://www.foo.com/ - This should be the root of the Drupal or Joomla site.";
 }
 
 function civicrm_site_key_callback_function()
