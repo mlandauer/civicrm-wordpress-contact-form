@@ -162,7 +162,7 @@ function civicrm_site_key_callback_function()
 {
     $option = get_option("civicrm");
     $value = $option['site_key'];
-    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See CIVICRM_SITE_KEY in /etc/drupal/6/sites/default/civicrm.settings.php";
+    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/Command-line+Script+Configuration'>CIVICRM_SITE_KEY</a> in your civicrm.settings.php";
 }
 
 function civicrm_user_settings_callback_function()
