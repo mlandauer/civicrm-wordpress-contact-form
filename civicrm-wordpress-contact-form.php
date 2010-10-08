@@ -103,7 +103,7 @@ function civicrm_admin_warning() {
 
 function civicrm_register_options_page()
 {
-    add_options_page( 'My Plugin Options', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
+    add_options_page( 'CiviCRM Contact Form Settings', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
 
 }
 
