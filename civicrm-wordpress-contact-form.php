@@ -162,12 +162,12 @@ function civicrm_site_key_callback_function()
 {
     $option = get_option("civicrm");
     $value = $option['site_key'];
-    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/Command-line+Script+Configuration'>CIVICRM_SITE_KEY</a> in your civicrm.settings.php";
+    echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See <a href='http://wiki.civicrm.org/confluence/display/CRMDOC/Command-line+Script+Configuration'>CIVICRM_SITE_KEY</a> in your civicrm.settings.php";
 }
 
 function civicrm_user_settings_callback_function()
 {
-    echo "Here, we need a CiviCRM user that has REST API access. See the <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/REST+interface'>CiviCRM wiki</a> for details of the excruciating process you have to go through to create an API key for a particular user.";
+    echo "Here, we need a CiviCRM user that has REST API access. See the <a href='http://wiki.civicrm.org/confluence/display/CRMDOC/REST+interface'>CiviCRM wiki</a> for details of the excruciating process you have to go through to create an API key for a particular user.";
 }
 
 function civicrm_username_callback_function()
