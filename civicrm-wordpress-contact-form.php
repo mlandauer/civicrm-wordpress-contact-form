@@ -109,7 +109,7 @@ function civicrm_register_options_page()
 
 function civicrm_register_settings()
 {
-    add_settings_section('civicrm_server_settings', 'CiviCRM server settings', null, 'civicrm_admin_options');
+    add_settings_section('civicrm_server_settings', 'CiviCRM server settings', 'civicrm_server_settings_callback_function', 'civicrm_admin_options');
 
     add_settings_field('civicrm_cms', 'CMS on which it is installed', 'civicrm_cms_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
     add_settings_field('civicrm_root_url', 'Home URL', 'civicrm_root_url_callback_function', 'civicrm_admin_options', 'civicrm_server_settings');
@@ -163,6 +163,11 @@ function civicrm_site_key_callback_function()
     $option = get_option("civicrm");
     $value = $option['site_key'];
     echo "<input type='text' name='civicrm[site_key]' value='{$value}' size=35 /><br/> See <a href='http://wiki.civicrm.org/confluence/display/CRMDOC/Command-line+Script+Configuration'>CIVICRM_SITE_KEY</a> in your civicrm.settings.php";
+}
+
+function civicrm_server_settings_callback_function()
+{
+    echo "Enter the details of your CiviCRM server.";
 }
 
 function civicrm_user_settings_callback_function()
