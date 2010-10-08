@@ -24,7 +24,8 @@ function civicrm_add_contact($civicrm_rest_url, $site_key, $api_key, $first_name
 {
     $params = array( "api_key" => $api_key, "first_name" => $first_name, "last_name" => $last_name,
         "email" => $email, "contact_type" => "Individual");
-    civicrm_api($civicrm_rest_url, $site_key, "contact/add", "POST", $params);
+    $result = civicrm_api($civicrm_rest_url, $site_key, "contact/add", "POST", $params);
+    return $result["contact_id"];
 }
 
 function civicrm_get_api_key($civicrm_rest_url, $site_key, $username, $password)
@@ -34,8 +35,18 @@ function civicrm_get_api_key($civicrm_rest_url, $site_key, $username, $password)
     return $result["api_key"];
 }
 
+function civicrm_create_activity($civicrm_rest_url, $site_key, $api_key, $contact_id, $activity_name, $activity_subject)
+{
+    // status_id (2 means complete)
+    $params = array('api_key' => $api_key, 'activity_name' => $activity_name, 'source_contact_id' => $contact_id, 'target_contact_id' => $contact_id, status_id => 2, 'subject' => $activity_subject);
+    $result = civicrm_api($civicrm_rest_url, $site_key, "activity/create", "POST", $params);
+    # TODO: Check that the activity_name was valid
+}
+
 function civicrm_form_shortcode($attrs)
 {
+    // TODO: Check syntax in $attrs before any data is posted to CiviCRM. Will make it much easier for people to debug
+    
     if ($_POST) {
         $option = get_option('civicrm');
 
@@ -44,8 +55,12 @@ function civicrm_form_shortcode($attrs)
         $last_name = $_POST["last_name"];
         $email = $_POST["email"];
 
+        $contact_id = civicrm_add_contact($option['rest_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
+        // Only post an activity against this contact if activity_name and activity_subject are set in the [civicrm] shortcode
+        if ($attrs['activity_name'] && $attrs['activity_subject'])
+            civicrm_create_activity($option['rest_url'], $option['site_key'], $option['api_key'], $contact_id, $attrs['activity_name'], $attrs['activity_subject']);
+
         echo "<p>Thanks for getting in touch! Your message has been sent</p>";
-        civicrm_add_contact($option['rest_url'], $option['site_key'], $option['api_key'], $first_name, $last_name, $email);
     }
 ?>
     <form action="" method="post" accept-charset="utf-8" id="contact">
@@ -76,7 +91,7 @@ function civicrm_options_page()
     ?>
     <div class="wrap">
         <h2>CiviCRM Contact Form Settings</h2>
-        <div class="postbox-container" style="width:70%;">
+        <div class="postbox-container" style="width:60%;">
             <form method="post" action="options.php">
                 <?php settings_fields( 'civicrm-settings-group' ); ?>
                 <?php do_settings_sections('civicrm_admin_options'); ?>
@@ -85,10 +100,13 @@ function civicrm_options_page()
                 </p>
             </form>
         </div>
-        <div class="postbox-container" style="width:20%;">
+        <div class="postbox-container" style="width:30%;">
             <p>First fill in the details on the left.</p>
             <p>Then copy the following shortcode into a post or page:
                 <pre style="padding:5px 10px;margin:10px 0;background-color:lightyellow;">[civicrm]</pre>
+            </p>
+            <p>Or, if you want to be a little more clever you can also create an associated activity:
+                <pre style="padding:5px 10px;margin:10px 0;background-color:lightyellow;white-space:pre-wrap;">[civicrm activity_name="Membership Signup" activity_subject="Sign up on the website"]</pre>
             </p>
         </div>
     </div>
