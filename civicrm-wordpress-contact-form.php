@@ -15,7 +15,6 @@ function civicrm_api($civicrm_rest_url, $site_key, $command, $method, $params)
     $params = array_merge($params, array("key" => $site_key, "q" => "civicrm/{$command}", "json" => 1));
     $url = $civicrm_rest_url."?".http_build_query($params);
     $result = wp_remote_request($url, array("method" => $method));
-    echo "<p>{$url}</p>";
     $json = json_decode($result["body"], true);
     // TODO: Error checking
     return $json;
