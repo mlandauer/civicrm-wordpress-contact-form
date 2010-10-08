@@ -167,7 +167,7 @@ function civicrm_site_key_callback_function()
 
 function civicrm_user_settings_callback_function()
 {
-    echo "Here, we need a CiviCRM user that has REST API access. See the <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/REST+interface'>CiviCRM wiki</a> for details of the excrutiating process you have to go through to create an API key for a particular user.";
+    echo "Here, we need a CiviCRM user that has REST API access. See the <a href='http://wiki.civicrm.org/confluence/display/CRMDOC32/REST+interface'>CiviCRM wiki</a> for details of the excruciating process you have to go through to create an API key for a particular user.";
 }
 
 function civicrm_username_callback_function()
