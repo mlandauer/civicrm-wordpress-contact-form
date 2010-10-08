@@ -30,7 +30,7 @@ function civicrm_add_contact($civicrm_drupal_root_url, $site_key, $api_key, $fir
 function civicrm_get_api_key($civicrm_drupal_root_url, $site_key, $username, $password)
 {
     $params2 = array("name" => $username, "pass" => $password);
-    $result = civicrm_api($civicrm_drupal_root_url, $site_key, "login", "GET", $params2);    
+    $result = civicrm_api($civicrm_drupal_root_url, $site_key, "login", "POST", $params2);    
     return $result["api_key"];
 }
 
