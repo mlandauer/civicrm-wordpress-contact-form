@@ -95,6 +95,12 @@ function civicrm_options_page()
     <?php
 }
 
+function civicrm_admin_warning() {
+    $options  = get_option('civicrm');
+    if (!isset($options['api_key']) || empty($options['api_key']))
+        echo "<div id='message' class='error'><p><strong>CiviCRM Contact Form is almost ready. You must <a href='".admin_url( 'options-general.php?page=civicrm-contact-form')."'>enter some details</a> for it to work.</p></div>";
+}
+
 function civicrm_register_options_page()
 {
     add_options_page( 'My Plugin Options', 'CiviCRM Contact Form', 'manage_options', 'civicrm-contact-form', 'civicrm_options_page');
@@ -117,6 +123,7 @@ function civicrm_register_settings()
 
 add_action('admin_menu', 'civicrm_register_options_page');
 add_action('admin_init', 'civicrm_register_settings' );
+add_action('admin_footer', 'civicrm_admin_warning');
 
 function civicrm_validate($input)
 {
