@@ -76,14 +76,21 @@ function civicrm_options_page()
     ?>
     <div class="wrap">
         <h2>CiviCRM Contact Form Settings</h2>
-        <form method="post" action="options.php">
-            <?php settings_fields( 'civicrm-settings-group' ); ?>
-            <?php do_settings_sections('civicrm_admin_options'); ?>
-            <p class="submit">
-            <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+        <div class="postbox-container" style="width:70%;">
+            <form method="post" action="options.php">
+                <?php settings_fields( 'civicrm-settings-group' ); ?>
+                <?php do_settings_sections('civicrm_admin_options'); ?>
+                <p class="submit">
+                <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                </p>
+            </form>
+        </div>
+        <div class="postbox-container" style="width:20%;">
+            <p>First fill in the details on the left.</p>
+            <p>Then copy the following shortcode into a post or page:
+                <pre style="padding:5px 10px;margin:10px 0;background-color:lightyellow;">[civicrm]</pre>
             </p>
-
-        </form>
+        </div>
     </div>
     <?php
 }
